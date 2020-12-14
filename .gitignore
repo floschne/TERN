@@ -3,3 +3,8 @@
 *.ipynb_checkpoints
 *.json
 *.pth.tar
+
+data
+downloads
+*.tar
+*.pth

@@ -175,7 +175,7 @@ def evalrank(config, checkpoint, split='dev', fold5=False):
         rsum = ri[0] + ri[1] + ri[2]
         print("rsum: %.1f" % rsum)
         print("Average t2i Recall: %.1f" % ari)
-        print("Text to image: %.1f %.1f %.1f %.1f %.1f, ndcg_rouge=%.4f, ndcg_spice=%.4f" % ri)
+        print("Text to image:\n R@1: %.1f R@5: %.1f R@10: %.1f Median Rank: %.1f Mean Rank: %.1f, ndcg_rouge=%.4f, ndcg_spice=%.4f" % ri)
 
         print(f"Time elapsed for t2i evaluation without 5-fold CV: {time.time() - eval_t2i_start_time} seconds." )
 
@@ -200,10 +200,9 @@ def evalrank(config, checkpoint, split='dev', fold5=False):
         print("rsum: %.1f" % (mean_metrics[8] * 6))
 
         print("Average t2i Recall: %.1f" % mean_metrics[7])
-        print("Text to image: %.1f %.1f %.1f %.1f %.1f ndcg_rouge=%.4f ndcg_spice=%.4f" %
-              mean_metrics[:7])
+        print("Text to image:\n R@1: %.1f R@5: %.1f R@10: %.1f Median Rank: %.1f Mean Rank: %.1f, ndcg_rouge=%.4f, ndcg_spice=%.4f" % mean_metrics[:7])
 
-    print(f"Time elapsed for encode_data: {time.time() - encode_data_start_time} seconds." )
+    print(f"Time elapsed for evalrank : {time.time() - evalrank_start_time} seconds.")
 
 
 def t2i(images, captions, npts=None, return_ranks=False, ndcg_scorer=None, fold_index=0, measure='dot'):

@@ -11,7 +11,7 @@ def main(opt, current_config):
     print('Checkpoint loaded from {}'.format(model_checkpoint))
     loaded_config = checkpoint['config']
 
-    if opt.fold5 and opt.size == "1k":
+    if opt.size == "1k":
         fold5 = True
     elif opt.size == "5k":
         fold5 = False
@@ -25,13 +25,13 @@ def main(opt, current_config):
     loaded_config['training']['bs'] = current_config['training']['bs']
     loaded_config['image-model']['pre-extracted-features-root'] = current_config['image-model']['pre-extracted-features-root']
 
-    evaluation.evalrank(loaded_config, checkpoint, split="test", fold5=fold5)
+    evaluation.evalrank(loaded_config, checkpoint, split="test", fold5=opt.fold5)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('checkpoint', type=str, help="Checkpoint to load")
     parser.add_argument('--size', type=str, choices=['1k', '5k'], default='1k')
-    parser.add_argument('--fold5', type=bool, default=False)
+    parser.add_argument('--fold5', default=False, action='store_true')
     parser.add_argument('--config', type=str, help="Which configuration to use. See into 'config' folder")
 
     opt = parser.parse_args()

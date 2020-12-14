@@ -39,7 +39,7 @@ training:
   max-violation: True
   measure: 'dot'
   margin: 0.2             # margin to use for the hinge-based triplet loss
-  bs: 80
+  bs: 40
   scheduler: 'steplr'
   gamma: 0.1
   step-size: 30           # step-size for the exponential-step scheduler

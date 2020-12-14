@@ -142,6 +142,8 @@ def evalrank(config, checkpoint, split='dev', fold5=False):
     cross-validation is done (only for MSCOCO). Otherwise, the full data is
     used for evaluation.
     """
+    evalrank_start_time = time.time()
+
     # load model and options
 
     # construct model
@@ -157,19 +159,27 @@ def evalrank(config, checkpoint, split='dev', fold5=False):
     ndcg_val_scorer = DCG(config, len(data_loader.dataset), split, rank=25, relevance_methods=['rougeL', 'spice'])
 
     print('Computing results...')
+    encode_data_start_time = time.time()
     img_embs, cap_embs = encode_data(model, data_loader)
+    print(f"Time elapsed for encode_data: {time.time() - encode_data_start_time} seconds." )
 
     print('Images: %d, Captions: %d' %
           (img_embs.shape[0] / 5, cap_embs.shape[0]))
 
     if not fold5:
         # no cross-validation, full evaluation
+        eval_t2i_start_time = time.time()
+
         ri, rti = t2i(img_embs, cap_embs, return_ranks=True, ndcg_scorer=ndcg_val_scorer)
         ari = (ri[0] + ri[1] + ri[2]) / 3
         rsum = ri[0] + ri[1] + ri[2]
         print("rsum: %.1f" % rsum)
         print("Average t2i Recall: %.1f" % ari)
         print("Text to image: %.1f %.1f %.1f %.1f %.1f, ndcg_rouge=%.4f, ndcg_spice=%.4f" % ri)
+
+        print(f"Time elapsed for t2i evaluation without 5-fold CV: {time.time() - eval_t2i_start_time} seconds." )
+
+
     else:
         # 5fold cross-validation, only for MSCOCO
         results = []
@@ -192,6 +202,8 @@ def evalrank(config, checkpoint, split='dev', fold5=False):
         print("Average t2i Recall: %.1f" % mean_metrics[7])
         print("Text to image: %.1f %.1f %.1f %.1f %.1f ndcg_rouge=%.4f ndcg_spice=%.4f" %
               mean_metrics[:7])
+
+    print(f"Time elapsed for encode_data: {time.time() - encode_data_start_time} seconds." )
 
 
 def t2i(images, captions, npts=None, return_ranks=False, ndcg_scorer=None, fold_index=0, measure='dot'):
